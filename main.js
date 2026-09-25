@@ -9,12 +9,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardsContainer = document.getElementById('cards-container');
     const btnOk = document.getElementById('btn-ok');
     const resultMessage = document.getElementById('result-message');
-    const btnRetry = document.getElementById('btn-retry');
+    const btnRetryDiff = document.getElementById('btn-retry-diff');
+    const btnRetrySame = document.getElementById('btn-retry-same');
 
     let sortableInstance = null;
     let currentSteps = [];
     let currentStepIndex = 0;
     let moveCount = 0;
+    let globalInitialArray = [];
+    let currentAlgo = '';
+    let currentEdgeCard = null;
 
     // ランダムな配列を生成 (5〜6個、重複なし)
     function generateRandomArray() {
@@ -29,15 +33,27 @@ document.addEventListener('DOMContentLoaded', () => {
         return arr;
     }
 
+    // 初期化（ページロード時）
+    function initApp() {
+        globalInitialArray = generateRandomArray();
+        renderCards(globalInitialArray, [], [], -1);
+    }
+
     // バブルソートのステップ履歴を生成
     function generateBubbleSortSteps(initialArray) {
         const steps = [];
         const tempArr = [...initialArray];
-        for (let i = 0; i < tempArr.length - 1; i++) {
-            for (let j = 0; j < tempArr.length - i - 1; j++) {
+        const length = tempArr.length;
+        for (let i = 0; i < length - 1; i++) {
+            for (let j = 0; j < length - i - 1; j++) {
                 const startState = [...tempArr];
                 const msg = `${tempArr[j]} と ${tempArr[j+1]} を比較します。左が大きければカードをドラッグして入れ替えてください。入れ替えが不要な場合はそのまま「これでOK」を押してください。`;
                 const targetValues = [tempArr[j], tempArr[j+1]];
+
+                const fixedIndices = [];
+                for(let k = 0; k < i; k++) {
+                    fixedIndices.push(length - 1 - k);
+                }
 
                 if (tempArr[j] > tempArr[j+1]) {
                     const tmp = tempArr[j];
@@ -46,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const endState = [...tempArr];
-                steps.push({ startState, endState, message: msg, targetValues });
+                steps.push({ startState, endState, message: msg, targetValues, fixedIndices, edgeIndex: -1 });
             }
         }
         return steps;
@@ -56,17 +72,24 @@ document.addEventListener('DOMContentLoaded', () => {
     function generateSelectionSortSteps(initialArray) {
         const steps = [];
         const tempArr = [...initialArray];
-        for (let i = 0; i < tempArr.length - 1; i++) {
+        const length = tempArr.length;
+        for (let i = 0; i < length - 1; i++) {
             const startState = [...tempArr];
             let minIdx = i;
-            for (let j = i + 1; j < tempArr.length; j++) {
+            for (let j = i + 1; j < length; j++) {
                 if (tempArr[j] < tempArr[minIdx]) {
                     minIdx = j;
                 }
             }
 
-            const msg = `未ソート部分から最小値を探し、左端のカード（${tempArr[i]}）と入れ替えてください。入れ替えが不要な場合はそのまま「これでOK」を押してください。`;
+            const msg = `未整列部分から最小値を探し、左端のカード（${tempArr[i]}）と入れ替えてください。入れ替えが不要な場合はそのまま「これでOK」を押してください。`;
             const targetValues = [tempArr[i]]; 
+
+            const fixedIndices = [];
+            for (let k = 0; k < i; k++) {
+                fixedIndices.push(k);
+            }
+            const edgeIndex = i;
 
             if (minIdx !== i) {
                 const tmp = tempArr[i];
@@ -75,23 +98,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const endState = [...tempArr];
-            steps.push({ startState, endState, message: msg, targetValues });
+            steps.push({ startState, endState, message: msg, targetValues, fixedIndices, edgeIndex });
         }
         return steps;
     }
 
     // ゲーム開始初期化処理
     function initGame(algo) {
-        const initialArray = generateRandomArray();
+        currentAlgo = algo;
         moveCount = 0;
         currentStepIndex = 0;
 
         if (algo === 'bubble') {
             currentAlgoTitle.textContent = 'バブルソート';
-            currentSteps = generateBubbleSortSteps(initialArray);
+            currentSteps = generateBubbleSortSteps(globalInitialArray);
         } else if (algo === 'selection') {
             currentAlgoTitle.textContent = '選択ソート';
-            currentSteps = generateSelectionSortSteps(initialArray);
+            currentSteps = generateSelectionSortSteps(globalInitialArray);
         }
 
         controlsArea.classList.add('hidden');
@@ -110,17 +133,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const step = currentSteps[currentStepIndex];
         guideMessage.textContent = step.message;
-        renderCards(step.startState, step.targetValues);
+        renderCards(step.startState, step.targetValues, step.fixedIndices, step.edgeIndex);
     }
 
     // カード要素を描画し、SortableJSを適用
-    function renderCards(arr, targetValues) {
+    function renderCards(arr, targetValues, fixedIndices, edgeIndex) {
         cardsContainer.innerHTML = '';
-        arr.forEach(num => {
+        arr.forEach((num, index) => {
             const card = document.createElement('div');
             card.className = 'card';
             if (targetValues.includes(num)) {
                 card.classList.add('highlight');
+            }
+            if (fixedIndices.includes(index)) {
+                card.classList.add('fixed');
             }
             card.textContent = num;
             card.dataset.value = num;
@@ -134,6 +160,26 @@ document.addEventListener('DOMContentLoaded', () => {
         sortableInstance = new Sortable(cardsContainer, {
             animation: 150,
             ghostClass: 'sortable-ghost',
+            swap: true,
+            swapClass: 'highlight-swap',
+            onStart: function(evt) {
+                if (currentAlgo === 'selection' && edgeIndex !== -1) {
+                    currentEdgeCard = cardsContainer.children[edgeIndex];
+                }
+            },
+            onMove: function(evt) {
+                // fixedのカードは動かしたり、入れ替え先にしたりできない
+                if (evt.dragged.classList.contains('fixed') || evt.related.classList.contains('fixed')) {
+                    return false;
+                }
+
+                // 選択ソートでは、端のカードともう一枚のみ交換可能
+                if (currentAlgo === 'selection' && currentEdgeCard) {
+                    if (evt.dragged !== currentEdgeCard && evt.related !== currentEdgeCard) {
+                        return false;
+                    }
+                }
+            }
         });
     }
 
@@ -154,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
             cardsContainer.classList.add('shake');
             setTimeout(() => {
                 cardsContainer.classList.remove('shake');
-                alert('不正解です。元の状態に戻ります。もう一度考えてみましょう。');
-                renderCards(step.startState, step.targetValues);
+                // アラートは出さずに自動で戻す
+                renderCards(step.startState, step.targetValues, step.fixedIndices, step.edgeIndex);
             }, 400); 
         }
     }
@@ -165,17 +211,42 @@ document.addEventListener('DOMContentLoaded', () => {
         gameArea.classList.add('hidden');
         resultArea.classList.remove('hidden');
         resultMessage.textContent = `完了しました。手数は${moveCount}回でした。`;
+        
+        // 全ての位置を確定として描画
+        const allIndices = globalInitialArray.map((_, i) => i);
+        const lastState = currentSteps[currentSteps.length - 1].endState;
+        renderCards(lastState, [], allIndices, -1);
+        
+        // 操作を無効化
+        if (sortableInstance) {
+            sortableInstance.options.disabled = true;
+        }
     }
 
-    // リセット
-    function resetApp() {
+    // リセット処理
+    function resetAppDiff() {
+        globalInitialArray = generateRandomArray();
+        resetUI();
+    }
+    
+    function resetAppSame() {
+        resetUI();
+    }
+
+    function resetUI() {
         controlsArea.classList.remove('hidden');
         resultArea.classList.add('hidden');
         gameArea.classList.add('hidden');
+        currentAlgo = '';
+        renderCards(globalInitialArray, [], [], -1);
     }
 
     btnBubble.addEventListener('click', () => initGame('bubble'));
     btnSelection.addEventListener('click', () => initGame('selection'));
     btnOk.addEventListener('click', checkAnswer);
-    btnRetry.addEventListener('click', resetApp);
+    btnRetryDiff.addEventListener('click', resetAppDiff);
+    btnRetrySame.addEventListener('click', resetAppSame);
+    
+    // アプリ初期化
+    initApp();
 });

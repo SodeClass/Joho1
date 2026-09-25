@@ -108,6 +108,38 @@ button:active {
 /* SortableJSのドラッグ中プレビュー */
 .sortable-ghost {
     opacity: 0.4;
+/* 確定したカードのスタイル */
+.card.fixed {
+    background-color: #e2e8f0;
+    border-color: #94a3b8;
+    color: #64748b;
+    cursor: default;
+    position: relative;
+}
+
+.card.fixed::after {
+    content: '✔';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #22c55e;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* swap中のスタイル */
+.highlight-swap {
+    background-color: #cbd5e1 !important;
+    opacity: 0.8;
+}
+
+
 }
 
 /* 不正解時のアニメーション */

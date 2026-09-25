@@ -17,14 +17,15 @@
             <button id="btn-selection">選択ソートを開始</button>
         </div>
 
+        <!-- カードコンテナをゲームエリアの外に配置して常に表示 -->
+        <div class="cards-container" id="cards-container">
+            <!-- カードがここに並びます -->
+        </div>
+
         <div id="game-area" class="hidden">
             <h2 id="current-algo-title"></h2>
             <div class="message-box" id="guide-message">
                 <!-- ガイドメッセージがここに表示されます -->
-            </div>
-            
-            <div class="cards-container" id="cards-container">
-                <!-- カードがここに並びます -->
             </div>
             
             <div class="action-box">
@@ -34,7 +35,10 @@
 
         <div id="result-area" class="hidden">
             <h2 id="result-message"></h2>
-            <button id="btn-retry" style="margin-top: 20px;">もう一度遊ぶ</button>
+            <div class="retry-controls" style="margin-top: 20px;">
+                <button id="btn-retry-diff">別の数字の並びでもう一度</button>
+                <button id="btn-retry-same">同じ数字の並びでもう一度</button>
+            </div>
         </div>
     </div>
     <script src="main.js"></script>
