@@ -69,6 +69,9 @@ button {
     color: white;
     transition: background-color 0.2s, transform 0.1s;
     box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+    -webkit-appearance: none;
+    appearance: none;
+
 }
 
 button:hover {
