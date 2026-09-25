@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < length - 1; i++) {
             for (let j = 0; j < length - i - 1; j++) {
                 const startState = [...tempArr];
-                const msg = `左から順に隣り合うカードを比較して、左が大きければ入れ替えてください。（※右が大きければそのままでOK。）`;
+                const msg = `隣り合うカードを比較して、左が大きければ入れ替えてください。（※右が大きければそのままでOK。）`;
                 const targetValues = [tempArr[j], tempArr[j+1]];
 
                 const fixedIndices = [];
