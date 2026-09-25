@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ソートアルゴリズム体験学習アプリ</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- SortableJSの読み込み -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>ソートアルゴリズム体験</h1>
+        
+        <div class="controls" id="controls">
+            <button id="btn-bubble">バブルソートを開始</button>
+            <button id="btn-selection">選択ソートを開始</button>
+        </div>
+
+        <div id="game-area" class="hidden">
+            <h2 id="current-algo-title"></h2>
+            <div class="message-box" id="guide-message">
+                <!-- ガイドメッセージがここに表示されます -->
+            </div>
+            
+            <div class="cards-container" id="cards-container">
+                <!-- カードがここに並びます -->
+            </div>
+            
+            <div class="action-box">
+                <button id="btn-ok">これでOK</button>
+            </div>
+        </div>
+
+        <div id="result-area" class="hidden">
+            <h2 id="result-message"></h2>
+            <button id="btn-retry" style="margin-top: 20px;">もう一度遊ぶ</button>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
