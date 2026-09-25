@@ -40,35 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCards(globalInitialArray, [], [], -1);
     }
 
-    // バブルソートのステップ履歴を生成
-    function generateBubbleSortSteps(initialArray) {
-        const steps = [];
-        const tempArr = [...initialArray];
-        const length = tempArr.length;
-        for (let i = 0; i < length - 1; i++) {
-            for (let j = 0; j < length - i - 1; j++) {
-                const startState = [...tempArr];
-                const msg = `隣り合うカードを比較して、左が大きければ入れ替えてください。（※右が大きければそのままでOK。）`;
-                const targetValues = [tempArr[j], tempArr[j+1]];
-
-                const fixedIndices = [];
-                for(let k = 0; k < i; k++) {
-                    fixedIndices.push(length - 1 - k);
-                }
-
-                if (tempArr[j] > tempArr[j+1]) {
-                    const tmp = tempArr[j];
-                    tempArr[j] = tempArr[j+1];
-                    tempArr[j+1] = tmp;
-                }
-
-                const endState = [...tempArr];
-                steps.push({ startState, endState, message: msg, targetValues, fixedIndices, edgeIndex: -1 });
-            }
-        }
-        return steps;
-    }
-
     // 選択ソートのステップ履歴を生成
     function generateSelectionSortSteps(initialArray) {
         const steps = [];
@@ -100,6 +71,35 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const endState = [...tempArr];
             steps.push({ startState, endState, message: msg, targetValues, fixedIndices, edgeIndex });
+        }
+        return steps;
+    }
+
+    // バブルソートのステップ履歴を生成
+    function generateBubbleSortSteps(initialArray) {
+        const steps = [];
+        const tempArr = [...initialArray];
+        const length = tempArr.length;
+        for (let i = 0; i < length - 1; i++) {
+            for (let j = 0; j < length - i - 1; j++) {
+                const startState = [...tempArr];
+                const msg = `隣り合うカードを比較して、左が大きければ入れ替えてください。（※右が大きければそのままでOK。）`;
+                const targetValues = [tempArr[j], tempArr[j+1]];
+
+                const fixedIndices = [];
+                for(let k = 0; k < i; k++) {
+                    fixedIndices.push(length - 1 - k);
+                }
+
+                if (tempArr[j] > tempArr[j+1]) {
+                    const tmp = tempArr[j];
+                    tempArr[j] = tempArr[j+1];
+                    tempArr[j+1] = tmp;
+                }
+
+                const endState = [...tempArr];
+                steps.push({ startState, endState, message: msg, targetValues, fixedIndices, edgeIndex: -1 });
+            }
         }
         return steps;
     }
@@ -227,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 終了処理
     function finishGame() {
-        gameInfo.classList.add('hidden');
         actionArea.classList.add('hidden');
         resultArea.classList.remove('hidden');
         resultMessage.textContent = `完了しました。手数は${moveCount}回でした。`;
