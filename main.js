@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         return steps;
+    }
+
     // 選択ソートのステップ履歴を生成
     function generateSelectionSortSteps(initialArray) {
         const steps = [];
@@ -177,6 +179,3 @@ document.addEventListener('DOMContentLoaded', () => {
     btnOk.addEventListener('click', checkAnswer);
     btnRetry.addEventListener('click', resetApp);
 });
-
-    }
-
