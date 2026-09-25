@@ -2,7 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBubble = document.getElementById('btn-bubble');
     const btnSelection = document.getElementById('btn-selection');
     const controlsArea = document.getElementById('controls');
-    const gameArea = document.getElementById('game-area');
+    const gameInfo = document.getElementById('game-info');
+    const actionArea = document.getElementById('action-area');
     const resultArea = document.getElementById('result-area');
     const currentAlgoTitle = document.getElementById('current-algo-title');
     const guideMessage = document.getElementById('guide-message');
@@ -20,9 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentAlgo = '';
     let currentEdgeCard = null;
 
-    // ランダムな配列を生成 (5〜6個、重複なし)
+    // ランダムな配列を生成 (5個、重複なし)
     function generateRandomArray() {
-        const length = Math.floor(Math.random() * 2) + 5; // 5 or 6
+        const length = 5; 
         const arr = [];
         while (arr.length < length) {
             const num = Math.floor(Math.random() * 99) + 1;
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 0; i < length - 1; i++) {
             for (let j = 0; j < length - i - 1; j++) {
                 const startState = [...tempArr];
-                const msg = `${tempArr[j]} と ${tempArr[j+1]} を比較します。左が大きければカードをドラッグして入れ替えてください。入れ替えが不要な場合はそのまま「これでOK」を押してください。`;
+                const msg = `左から順に隣り合うカードを比較して、左が大きければ入れ替えてください。（※右が大きければそのままでOK。）`;
                 const targetValues = [tempArr[j], tempArr[j+1]];
 
                 const fixedIndices = [];
@@ -82,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            const msg = `未整列部分から最小値を探し、左端のカード（${tempArr[i]}）と入れ替えてください。入れ替えが不要な場合はそのまま「これでOK」を押してください。`;
+            const msg = `未整列部分から最小値を探し、左端のカードと入れ替えてください。（※左端が最小ならそのままでOK。）`;
             const targetValues = [tempArr[i]]; 
 
             const fixedIndices = [];
@@ -118,7 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         controlsArea.classList.add('hidden');
-        gameArea.classList.remove('hidden');
+        gameInfo.classList.remove('hidden');
+        actionArea.classList.remove('hidden');
         resultArea.classList.add('hidden');
         
         renderStep();
@@ -142,12 +144,25 @@ document.addEventListener('DOMContentLoaded', () => {
         arr.forEach((num, index) => {
             const card = document.createElement('div');
             card.className = 'card';
-            if (targetValues.includes(num)) {
-                card.classList.add('highlight');
-            }
+            
+            let isDraggable = true;
+
             if (fixedIndices.includes(index)) {
                 card.classList.add('fixed');
+                isDraggable = false;
             }
+            
+            if (targetValues.includes(num)) {
+                card.classList.add('highlight');
+            } else if (currentAlgo === 'bubble') {
+                // バブルソートでは強調されていないものはドラッグ不可
+                isDraggable = false;
+            }
+
+            if (!isDraggable) {
+                card.classList.add('not-draggable');
+            }
+
             card.textContent = num;
             card.dataset.value = num;
             cardsContainer.appendChild(card);
@@ -162,17 +177,17 @@ document.addEventListener('DOMContentLoaded', () => {
             ghostClass: 'sortable-ghost',
             swap: true,
             swapClass: 'highlight-swap',
+            filter: '.not-draggable',
             onStart: function(evt) {
                 if (currentAlgo === 'selection' && edgeIndex !== -1) {
                     currentEdgeCard = cardsContainer.children[edgeIndex];
                 }
             },
             onMove: function(evt) {
-                // fixedのカードは動かしたり、入れ替え先にしたりできない
-                if (evt.dragged.classList.contains('fixed') || evt.related.classList.contains('fixed')) {
+                if (evt.related.classList.contains('not-draggable')) {
                     return false;
                 }
-
+                
                 // 選択ソートでは、端のカードともう一枚のみ交換可能
                 if (currentAlgo === 'selection' && currentEdgeCard) {
                     if (evt.dragged !== currentEdgeCard && evt.related !== currentEdgeCard) {
@@ -197,7 +212,11 @@ document.addEventListener('DOMContentLoaded', () => {
             currentStepIndex++;
             renderStep();
         } else {
+            // アニメーションのリセットと再適用を確実に行う
+            cardsContainer.classList.remove('shake');
+            void cardsContainer.offsetWidth; // リフローを強制
             cardsContainer.classList.add('shake');
+            
             setTimeout(() => {
                 cardsContainer.classList.remove('shake');
                 // アラートは出さずに自動で戻す
@@ -208,7 +227,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 終了処理
     function finishGame() {
-        gameArea.classList.add('hidden');
+        gameInfo.classList.add('hidden');
+        actionArea.classList.add('hidden');
         resultArea.classList.remove('hidden');
         resultMessage.textContent = `完了しました。手数は${moveCount}回でした。`;
         
@@ -236,7 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function resetUI() {
         controlsArea.classList.remove('hidden');
         resultArea.classList.add('hidden');
-        gameArea.classList.add('hidden');
+        gameInfo.classList.add('hidden');
+        actionArea.classList.add('hidden');
         currentAlgo = '';
         renderCards(globalInitialArray, [], [], -1);
     }

@@ -5,39 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ソートアルゴリズム体験学習アプリ</title>
     <link rel="stylesheet" href="style.css">
-    <!-- SortableJSの読み込み -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Swap機能を利用するため、完全版のSortable.jsを読み込みます -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>ソートアルゴリズム体験</h1>
         
-        <div class="controls" id="controls">
-            <button id="btn-bubble">バブルソートを開始</button>
-            <button id="btn-selection">選択ソートを開始</button>
+        <!-- 説明文やボタンの領域。高さを固定してカードの位置を揃える -->
+        <div class="header-area">
+            <div class="controls" id="controls">
+                <button id="btn-bubble">バブルソートを開始</button>
+                <button id="btn-selection">選択ソートを開始</button>
+            </div>
+            
+            <div id="game-info" class="hidden">
+                <h2 id="current-algo-title"></h2>
+                <div class="message-box" id="guide-message">
+                    <!-- ガイドメッセージがここに表示されます -->
+                </div>
+            </div>
         </div>
 
-        <!-- カードコンテナをゲームエリアの外に配置して常に表示 -->
+        <!-- 説明文より下にカードを配置 -->
         <div class="cards-container" id="cards-container">
             <!-- カードがここに並びます -->
         </div>
 
-        <div id="game-area" class="hidden">
-            <h2 id="current-algo-title"></h2>
-            <div class="message-box" id="guide-message">
-                <!-- ガイドメッセージがここに表示されます -->
+        <!-- アクションボタンや結果表示エリア -->
+        <div class="footer-area">
+            <div id="action-area" class="hidden">
+                <div class="action-box">
+                    <button id="btn-ok">これでOK</button>
+                </div>
             </div>
-            
-            <div class="action-box">
-                <button id="btn-ok">これでOK</button>
-            </div>
-        </div>
 
-        <div id="result-area" class="hidden">
-            <h2 id="result-message"></h2>
-            <div class="retry-controls" style="margin-top: 20px;">
-                <button id="btn-retry-diff">別の数字の並びでもう一度</button>
-                <button id="btn-retry-same">同じ数字の並びでもう一度</button>
+            <div id="result-area" class="hidden">
+                <h2 id="result-message"></h2>
+                <div class="retry-controls" style="margin-top: 20px;">
+                    <button id="btn-retry-diff">別の数字の並びでもう一度</button>
+                    <button id="btn-retry-same">同じ数字の並びでもう一度</button>
+                </div>
             </div>
         </div>
     </div>

@@ -25,13 +25,40 @@ h1 {
     color: #2c3e50;
 }
 
+.header-area {
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-area {
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
 .controls {
     margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
+.retry-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
 }
 
 button {
     padding: 12px 24px;
-    margin: 0 10px;
+    margin: 0;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
@@ -108,6 +135,8 @@ button:active {
 /* SortableJSのドラッグ中プレビュー */
 .sortable-ghost {
     opacity: 0.4;
+}
+
 /* 確定したカードのスタイル */
 .card.fixed {
     background-color: #e2e8f0;
@@ -139,7 +168,9 @@ button:active {
     opacity: 0.8;
 }
 
-
+/* ドラッグできない要素を半透明にせず、普通の見た目にする */
+.not-draggable {
+    cursor: default;
 }
 
 /* 不正解時のアニメーション */
