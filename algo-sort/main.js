@@ -152,18 +152,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 isDraggable = false;
             }
             
-            if (targetValues.includes(num)) {
-                card.classList.add('highlight');
-            } else if (currentAlgo === 'bubble') {
-                // バブルソートでは強調されていないものはドラッグ不可
-                isDraggable = false;
+            if (currentAlgo === 'selection') {
+                if (index === edgeIndex) {
+                    card.classList.add('highlight');
+                }
+            } else {
+                if (targetValues.includes(num)) {
+                    card.classList.add('highlight');
+                } else if (currentAlgo === 'bubble') {
+                    // バブルソートでは強調されていないものはドラッグ不可
+                    isDraggable = false;
+                }
             }
 
             if (!isDraggable) {
                 card.classList.add('not-draggable');
             }
 
-            card.textContent = num;
+            // 数字を全角に変換して表示
+            card.textContent = String(num).replace(/[0-9]/g, s => String.fromCharCode(s.charCodeAt(0) + 0xFEE0));
             card.dataset.value = num;
             cardsContainer.appendChild(card);
         });
@@ -192,6 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentAlgo === 'selection' && currentEdgeCard) {
                     if (evt.dragged !== currentEdgeCard && evt.related !== currentEdgeCard) {
                         return false;
+                    }
+                }
+            },
+            onEnd: function(evt) {
+                // 選択ソートの場合、ドラッグ(Swap)後に要素が入れ替わってハイライト位置がズレるため再設定する
+                if (currentAlgo === 'selection' && edgeIndex !== -1) {
+                    Array.from(cardsContainer.children).forEach(c => c.classList.remove('highlight'));
+                    if (cardsContainer.children[edgeIndex]) {
+                        cardsContainer.children[edgeIndex].classList.add('highlight');
                     }
                 }
             }

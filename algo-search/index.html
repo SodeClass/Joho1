@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>探索アルゴリズム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>探索アルゴリズム</h1>
+        
+        <div class="header-area">
+            <div class="controls" id="controls">
+                <div class="control-group" id="mode-control" style="margin-bottom: 20px;">
+                    <span style="font-weight: bold; margin-right: 10px; display: flex; align-items: center;">モード:</span>
+                    <div class="toggle-switch">
+                        <input type="radio" id="mode-number" name="mode" value="number" checked>
+                        <label for="mode-number">数字</label>
+                        <input type="radio" id="mode-word" name="mode" value="word">
+                        <label for="mode-word">単語</label>
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="control-group" id="start-controls">
+                    <button id="btn-start-linear">線形探索を開始</button>
+                    <button id="btn-start-binary">二分探索を開始</button>
+                </div>
+            </div>
+            
+            <div id="game-info" class="hidden" style="width: 100%;">
+                <h2 id="current-algo-title" style="margin-top: 0; color: #2c3e50; margin-bottom: 15px;"></h2>
+                <div class="message-box" id="guide-message">
+                    <!-- ガイドメッセージがここに表示されます -->
+                </div>
+            </div>
+        </div>
+
+        <div id="target-area" style="text-align: center; margin: 0 0 20px 0;">
+            <div class="target-badge-container">
+                <span class="target-label">探している値</span>
+                <span class="target-badge" id="target-value"></span>
+            </div>
+        </div>
+
+        <div class="minimap-container">
+            <div class="minimap-track">
+                <div id="minimap-cards"></div>
+                <div id="minimap-viewport-box"></div>
+            </div>
+        </div>
+
+        <div class="cards-container main-view-container" id="main-view-container">
+            <div id="main-cards"></div>
+        </div>
+
+        <div class="footer-area">
+            <div id="result-area">
+                <h2 id="result-message"></h2>
+            </div>
+            <div id="retry-controls" class="retry-controls hidden" style="margin-top: 15px;">
+                <button id="btn-retry-same">同じ並びでもう一度</button>
+                <button id="btn-retry-diff">違う並びでもう一度</button>
+            </div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>

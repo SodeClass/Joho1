@@ -60,7 +60,7 @@ h1 {
 button {
     padding: 16px 24px;
     margin: 0;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
     border: none;
@@ -71,7 +71,6 @@ button {
     box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
     -webkit-appearance: none;
     appearance: none;
-
 }
 
 button:hover {
@@ -93,7 +92,7 @@ button:active {
     background-color: #e8f4fd;
     border-left: 5px solid #3498db;
     border-radius: 4px;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 1.5;
     max-width: 600px;
     text-align: left;
@@ -111,12 +110,12 @@ button:active {
     width: 70px;
     height: 100px;
     background-color: #fff;
-    border: 3px solid #cbd5e1;
+    border: 5px solid #cbd5e1;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bold;
     color: #334155;
     cursor: grab;
@@ -131,9 +130,7 @@ button:active {
 
 /* 比較対象をハイライトするクラス */
 .card.highlight {
-    background-color: #fef08a;
     border-color: #eab308;
-    color: #854d0e;
 }
 
 /* SortableJSのドラッグ中プレビュー */
@@ -160,7 +157,7 @@ button:active {
     border-radius: 50%;
     width: 24px;
     height: 24px;
-    font-size: 14px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
