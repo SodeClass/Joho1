@@ -26,7 +26,7 @@ h1 {
 }
 
 .header-area {
-    min-height: 220px;
+    min-height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: center;
